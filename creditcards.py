@@ -16,19 +16,28 @@ import pytesseract
 # args = vars(ap.parse_args())
 
 args = {
-    "image": "resources/testCC/NZ-216199115-CC-CC_216199115_1615189719991_0.jpg",
+    # "image": "resources/testCC/NZ-216199115-CC-CC_216199115_1615189719991_0.jpg",
     # "image": "resources/testCC/test-visa-gold.png",
+    "image": "resources/testCC/visaKlarna.png",
+    # "image": "resources/testCC/testcc2.jpg",
     "reference": "resources/ocr_a_reference.png"
 }
 
 # define a dictionary that maps the first digit of a credit card
 # number to the credit card type
 FIRST_NUMBER = {
+    "0": "Detection error",
+    "1": "Unknown Card",
+    "2": "Unknown Card",
+
     "3": "American Express",
     "4": "Visa",
     "5": "MasterCard",
     "6": "Discover Card",
-    "": "Unknown Card",
+
+    "7": "Unknown Card",
+    "8": "Unknown Card",
+    "9": "Unknown Card",
 }
 
 # load the reference OCR-A image from disk, convert it to grayscale,
@@ -176,15 +185,19 @@ for (i, (gX, gY, gW, gH)) in enumerate(locs):
 
     # update the output digits list
     output.extend(groupOutput)
+    output.extend(" ")
 
 # display the output credit card information to the screen
+print("Output size: {}, {} \n".format(len(output), output))
 print("Digits locations: {}".format(locs or "no digits found"))
+
 if len(output) > 0:
     print("Credit Card Type: {}".format(FIRST_NUMBER[output[0]]))
     print("Credit Card #: {}".format("".join(output)))
-else:
-    text = pytesseract.image_to_string(args["image"])
-    print(text)
 
-cv2.imshow("Image", image)
-# cv2.waitKey(0)
+print("\nOutput from Tesseract:")
+text = pytesseract.image_to_string(image)
+print(text)
+
+cv2.imshow("Image", image)  # shows an image mearked with the digit groups found
+cv2.waitKey(0)  # doesnt open the image window without this
